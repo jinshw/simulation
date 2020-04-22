@@ -13,6 +13,8 @@ public interface SseSceneDatasDao {
     int delete(SseSceneDatas pojo);
 
     List<SseSceneDatas> findList(SseSceneDatas pojo);
+    
+    List<SseSceneDatas> findWebList(SseSceneDatas pojo);
 
     List<SseSceneDatas> findDistributionList(SseSceneDatas pojo);
 

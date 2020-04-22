@@ -17,4 +17,6 @@ public interface SseSceneTypeService {
     int delete(SseSceneType pojo);
 
     Map<String, Object> deleteObj(SseSceneType pojo);
+
+    SseSceneType selectByid(String id);
 }

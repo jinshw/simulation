@@ -99,4 +99,8 @@ public class SseSceneTypeServiceImpl implements SseSceneTypeService {
         return sseSceneTypeDao.delete(pojo);
     }
 
+    @Override
+    public SseSceneType selectByid(String id) {
+        return sseSceneTypeDao.selectByid(id);
+    }
 }

@@ -56,6 +56,24 @@ public class SseSceneTypeController {
     public Map<String, Object> addSceneType(@RequestBody SseSceneType sseSceneType, HttpServletResponse response) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("code", 20000);
+        String stId = sseSceneType.getStId();
+        if (null == stId || ("").equals(stId)) {
+            map.put("status", 50001);
+            map.put("message", "ID 不能为空");
+        } else {
+            SseSceneType tempObj = sseSceneTypeService.selectByid(sseSceneType.getStId());
+
+            if (tempObj != null) {
+                map.put("status", 50002);
+                map.put("message", "ID 已经存在");
+            } else {
+                map = addOne(sseSceneType, map);
+            }
+        }
+        return map;
+    }
+
+    private Map<String, Object> addOne(SseSceneType sseSceneType, Map<String, Object> map) {
         Timestamp createtime = new Timestamp(System.currentTimeMillis());
         sseSceneType.setOptTime(createtime);
         Subject currentUser = SecurityUtils.getSubject();

@@ -31,6 +31,24 @@ public class SseSceneDatas {
     private List<String> keywords = null;
     private List<SseSceneType> scenetypeList = new ArrayList<>();
 
+    private Integer innum;//web端查询用：in 个数
+    private Integer mynum;//web端查询用：各条场景自己的场景类型
+
+    public Integer getInnum() {
+        return innum;
+    }
+
+    public void setInnum(Integer innum) {
+        this.innum = innum;
+    }
+
+    public Integer getMynum() {
+        return mynum;
+    }
+
+    public void setMynum(Integer mynum) {
+        this.mynum = mynum;
+    }
 
     public List<SseSceneType> getScenetypeList() {
         return scenetypeList;

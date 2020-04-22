@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface SseSceneDatasService {
     PageInfo<SseSceneDatas> findList(SseSceneDatas pojo);
+    
+    PageInfo<SseSceneDatas> findWebList(SseSceneDatas pojo);
 
     PageInfo<SseSceneDatas> findDistributionList(SseSceneDatas pojo);
 

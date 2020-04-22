@@ -47,6 +47,19 @@ public class SseSceneDatasController {
         return map;
     }
 
+    @RequestMapping(value = "weblist", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> webList(@RequestBody SseSceneDatas sseSceneDatas) {
+        PageInfo<SseSceneDatas> pageInfo = sseSceneDatasService.findWebList(sseSceneDatas);
+        List<SseKeyword> sseKeywordList = sseKeywordService.findList(new SseKeyword());
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("list", pageInfo);
+        map.put("keywordlist", sseKeywordList);
+        map.put("number", pageInfo.getTotal());
+        map.put("code", 20000);
+        return map;
+    }
+
     @RequestMapping(value = "mySceneList", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> mySceneList(@RequestBody SseSceneDatas sseSceneDatas) {

@@ -86,8 +86,10 @@ public class ShiroConfig {
         map.put("/sseSceneDatas/addData","anon");
         map.put("/sseSceneDatas/editData","anon");
         map.put("/sseSceneDatas/list","anon");
+        map.put("/sseSceneDatas/weblist","anon");
         map.put("/sseSceneDatas/listByKeyword","anon");
         map.put("/sseSceneDatas/getPreviewFileUrl","anon");
+        map.put("/sceneType/getTree","anon");
         map.put("/sseChart/**","anon");
         map.put("/sceneType/**","anon");
         map.put("/keyword/**","anon");

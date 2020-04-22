@@ -51,6 +51,26 @@ public class SseSceneDatasServiceImpl implements SseSceneDatasService {
     }
 
     @Override
+    public PageInfo<SseSceneDatas> findWebList(SseSceneDatas pojo) {
+        PageHelper.startPage(pojo.getPageNum(), pojo.getPageSize());
+        List<SseSceneDatas> list = sseSceneDatasDao.findWebList(pojo);
+        List<SseSceneType> tempList = pojo.getScenetypeList();
+        int size = tempList.size();
+        List<SseSceneDatas> resultList = list.stream().filter(s -> {
+            int innum = s.getInnum();
+            int mynum = s.getMynum();
+            boolean flag = false;
+//            if (innum == mynum && innum >= size) {
+            if ((innum == size && innum <= mynum) || size == 0) {
+                flag = true;
+            }
+            return flag;
+        }).collect(Collectors.toList());
+        PageInfo<SseSceneDatas> page = new PageInfo<SseSceneDatas>(resultList);
+        return page;
+    }
+
+    @Override
     public PageInfo<SseSceneDatas> findDistributionList(SseSceneDatas pojo) {
         Subject currentUser = SecurityUtils.getSubject();
         SysUser currentSysUser = (SysUser) currentUser.getPrincipal();

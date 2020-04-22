@@ -16,6 +16,8 @@
 		<result column="review_comment" property="reviewComment"/>
 		<result column="update_time" property="updateTime"/>
 		<result column="opt_person" property="optPerson"/>
+		<result column="innum" property="innum"/>
+		<result column="mynum" property="mynum"/>
 		<collection property="sysUser" column="opt_person" select="com.site.mountain.dao.mysql.SysUserDao.findUser"/>
 <!--		<collection property="roadTypeObj" column="road_type" select="com.site.mountain.dao.mysql.SseSceneTypeDao.selectByid"/>-->
 <!--		<collection property="sceneTypeObj" column="scene_type" select="com.site.mountain.dao.mysql.SseSceneTypeDao.selectByid"/>-->
@@ -239,6 +241,37 @@
 		and ru.sid = #{sid}
     </select>
 
+	<select id="findWebList" parameterType="com.site.mountain.entity.SseSceneDatas" resultMap="AllColumnMap">
+		SELECT t.* ,
+		(
+			SELECT count(1)
+			FROM
+				sse_scene_datas sd,
+				sse_scene_scenetype ss
+			<where>
+				<if test="1==1">
+					AND sd.sid = ss.sid
+					AND sd.sid = t.sid
+				</if>
+				<if test="scenetypeList.size() > 0 ">
+					AND ss.st_id IN
+					<foreach item="item" index="" collection="scenetypeList" open="(" close=")" separator=",">
+						#{item.stId}
+					</foreach>
+				</if>
+			</where>
+		) innum,
+		(
+			SELECT count(1) mynum
+			FROM
+				sse_scene_datas sd,
+				sse_scene_scenetype ss
+			WHERE
+				sd.sid = ss.sid
+			and ss.sid = t.sid
+		) mynum
+		from sse_scene_datas t
+	</select>
 
     <delete id="delete" parameterType="com.site.mountain.entity.SseSceneDatas">
         DELETE from sse_scene_datas
