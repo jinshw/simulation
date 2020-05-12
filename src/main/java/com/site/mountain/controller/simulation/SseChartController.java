@@ -1,10 +1,7 @@
 package com.site.mountain.controller.simulation;
 
 import com.github.pagehelper.PageInfo;
-import com.site.mountain.entity.SseChart;
-import com.site.mountain.entity.SseCollectionDatas;
-import com.site.mountain.entity.SseKeyword;
-import com.site.mountain.entity.SseSceneDatas;
+import com.site.mountain.entity.*;
 import com.site.mountain.service.SseChartService;
 import com.site.mountain.service.SseCollectionDatasService;
 import com.site.mountain.service.SseSceneDatasService;
@@ -71,4 +68,14 @@ public class SseChartController {
     }
 
 
+    @RequestMapping(value = "todolist", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> list(@RequestBody Todo todo) {
+        PageInfo<Todo> pageInfo = sseChartService.findToDoList(todo);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("list", pageInfo);
+        map.put("number", pageInfo.getTotal());
+        map.put("code", 20000);
+        return map;
+    }
 }

@@ -1,6 +1,9 @@
 package com.site.mountain.service;
 
+import com.github.pagehelper.PageInfo;
 import com.site.mountain.entity.SseChart;
+import com.site.mountain.entity.SseSceneDatas;
+import com.site.mountain.entity.Todo;
 
 import java.util.List;
 
@@ -15,4 +18,5 @@ public interface SseChartService {
 
     List<SseChart> findPie(String type);
 
+    PageInfo<Todo> findToDoList(Todo pojo);
 }

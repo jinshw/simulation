@@ -20,6 +20,7 @@ public class SseSceneDatas {
     private String reviewComment;
     private Timestamp updateTime;
     private BigInteger optPerson;
+    private String filePath;
 
     // 扩展字段
     private Integer pageNum;
@@ -33,6 +34,15 @@ public class SseSceneDatas {
 
     private Integer innum;//web端查询用：in 个数
     private Integer mynum;//web端查询用：各条场景自己的场景类型
+
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 
     public Integer getInnum() {
         return innum;

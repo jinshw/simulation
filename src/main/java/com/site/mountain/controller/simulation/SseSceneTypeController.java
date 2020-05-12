@@ -81,8 +81,11 @@ public class SseSceneTypeController {
         if (sysUser != null) {
             sseSceneType.setOptPerson(sysUser.getUserId());
         }
-        String uuid = UUIDUtil.create32UUID();
-        sseSceneType.setStId(uuid);
+        String stId = sseSceneType.getStId();
+        if(stId == null || stId == ""){
+            String uuid = UUIDUtil.create32UUID();
+            sseSceneType.setStId(uuid);
+        }
         int flag = sseSceneTypeService.insert(sseSceneType);
         if (flag == 1) {
             map.put("status", 20000);

@@ -106,6 +106,23 @@ public class SseSceneDatasServiceImpl implements SseSceneDatasService {
     @Override
     public int insert(SseSceneDatas sseSceneDatas) {
         int flag = sseSceneDatasDao.insert(sseSceneDatas);
+
+        // 处理场景类型关联表
+        SseSceneScenetype deleteSseSceneScenetype = new SseSceneScenetype();
+        deleteSseSceneScenetype.setStId(sseSceneDatas.getSid());
+        sseSceneScenetypeDao.delete(deleteSseSceneScenetype);
+        List<SseSceneType> sseSceneScenetypeList = sseSceneDatas.getScenetypeList();
+        SseSceneScenetype sseSceneScenetype = null;
+        SseSceneType sseSceneType = null;
+        for (int i = 0; i < sseSceneScenetypeList.size(); i++) {
+            sseSceneType = sseSceneScenetypeList.get(i);
+            sseSceneScenetype = new SseSceneScenetype();
+            sseSceneScenetype.setStId(sseSceneType.getStId());
+            sseSceneScenetype.setSid(sseSceneDatas.getSid());
+            sseSceneScenetype.setSsid(UUIDUtil.create32UUID());
+            flag = sseSceneScenetypeDao.insert(sseSceneScenetype);
+        }
+
         // 处理场景关键字表
         // 1.删除关系表中的sid相关数据
         SseSceneKeyword deleteSceneKeyword = new SseSceneKeyword();
