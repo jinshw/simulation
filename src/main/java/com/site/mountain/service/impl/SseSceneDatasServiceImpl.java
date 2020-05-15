@@ -185,6 +185,11 @@ public class SseSceneDatasServiceImpl implements SseSceneDatasService {
     }
 
     @Override
+    public int updateScene(SseSceneDatas sseSceneDatas) {
+        return sseSceneDatasDao.updateOne(sseSceneDatas);
+    }
+
+    @Override
     public int delete(SseSceneDatas pojo) {
         return sseSceneDatasDao.delete(pojo);
     }

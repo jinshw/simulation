@@ -19,6 +19,9 @@ public class ResourceConfigAdapter implements WebMvcConfigurer {
 //        registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/dist/");
         String imgUploadPath = constantProperties.getImgUploadPath();
         registry.addResourceHandler("/picture/**").addResourceLocations("file:" + imgUploadPath);
+        String fileUploadPath = constantProperties.getFileUploadPath();
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:" + fileUploadPath);
+
     }
 
 }

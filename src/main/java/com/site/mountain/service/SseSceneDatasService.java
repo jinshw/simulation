@@ -21,6 +21,8 @@ public interface SseSceneDatasService {
 
     int updateOne(SseSceneDatas pojo);
 
+    int updateScene(SseSceneDatas sseSceneDatas);
+
     int delete(SseSceneDatas pojo);
 
     int addSceneUser(List<SseSceneDatas> list);

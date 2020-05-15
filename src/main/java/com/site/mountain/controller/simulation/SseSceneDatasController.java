@@ -3,12 +3,15 @@ package com.site.mountain.controller.simulation;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.site.mountain.constant.ConstantProperties;
+import com.site.mountain.controller.sys.SysFilesController;
 import com.site.mountain.entity.*;
 import com.site.mountain.service.SseKeywordService;
 import com.site.mountain.service.SseSceneDatasService;
 import com.site.mountain.utils.UUIDUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +29,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("sseSceneDatas")
 public class SseSceneDatasController {
+    private final static Logger logger = LoggerFactory.getLogger(SseSceneDatasController.class);
     @Autowired
     private SseSceneDatasService sseSceneDatasService;
     @Autowired
@@ -256,4 +259,104 @@ public class SseSceneDatasController {
         }
         return map;
     }
+
+    @RequestMapping(value = "fileDataUpload", method = RequestMethod.POST)
+    public void fileDataUpload(@RequestParam(value = "file", required = false) MultipartFile file, String sseSceneDatasStr, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", 20000);
+        SseSceneDatas sseSceneDatasParam = JSONObject.parseObject(sseSceneDatasStr, SseSceneDatas.class);
+        //获取文件名
+        String fileName = file.getOriginalFilename();
+        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        String filePathName = sseSceneDatasParam.getSid() + "-filepath" + suffix;
+        String path = constantProperties.getFileUploadPath();
+        String filePath = path + filePathName;
+        File saveFile = new File(filePath);
+//        boolean isCreateSuccess = saveFile.createNewFile();
+        if (true) {
+            //写入文件
+            file.transferTo(saveFile);
+            jsonObject.put("status", 200);
+            String coverUrl = constantProperties.getImgUrl() + "/" + filePathName;
+            jsonObject.put("name", filePathName);
+            jsonObject.put("url", coverUrl);
+            sseSceneDatasParam.setFilePath(filePathName);
+//            Subject currentUser = SecurityUtils.getSubject();
+//            SysUser sysUser = (SysUser) currentUser.getPrincipal();
+//            sseSceneDatasParam.setOptPerson(sysUser.getUserId());
+            int flag = sseSceneDatasService.updateScene(sseSceneDatasParam);
+            if (flag == 0) {
+                jsonObject.put("status", 501);
+                jsonObject.put("msg", "文件上传失败");
+            }
+        } else {
+            jsonObject.put("status", 500);
+            jsonObject.put("msg", "文件已存在");
+        }
+        try {
+            response.setContentType("text/html;charset=utf-8");
+            response.getWriter().print(jsonObject.toJSONString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "fileDownLoad", method = RequestMethod.POST)
+    public void fileDownLoad(@RequestBody SseSceneDatas sseSceneDatas, HttpServletRequest request, HttpServletResponse response) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", 20000);
+        String fileName = sseSceneDatas.getFilePath();
+//        String filePath = sysFiles.getPath();
+        String path = constantProperties.getFileUploadPath() + fileName;
+        File file = new File(path);
+
+        FileInputStream fileInputStream = null;
+        BufferedInputStream bufferedInputStream = null;
+        OutputStream outputStream = null;
+
+        response.setHeader("content-type", "application/octet-stream");
+        response.setContentType("application/octet-stream;charset=utf-8");
+        try {
+            if (!file.exists()) {
+                logger.info("文件不存在");
+                jsonObject.put("code", 20000);
+                jsonObject.put("status", 500);
+                jsonObject.put("data", "");
+                jsonObject.put("msg", "文件不存在");
+                response.setContentType("text/html;charset=utf-8");
+                response.getWriter().print(jsonObject.toJSONString());
+            }
+            response.addHeader("Content-Disposition", "attachment;fileName=" + java.net.URLEncoder.encode(fileName, "UTF-8"));
+
+            byte[] buffer = new byte[1024];
+            fileInputStream = new FileInputStream(file);
+            bufferedInputStream = new BufferedInputStream(fileInputStream);
+            outputStream = response.getOutputStream();
+            int i = bufferedInputStream.read(buffer);
+            while (i != -1) {
+                outputStream.write(buffer, 0, i);
+                i = bufferedInputStream.read(buffer);
+            }
+            outputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+                if (bufferedInputStream != null) {
+                    bufferedInputStream.close();
+                }
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+
 }
